@@ -11,6 +11,7 @@ export class RasaDomainModel {
   };
   nlu: RasaNluModel[];
   stories: RasaStoryModel[];
+  actions: string[];
 
   constructor() {
     this.version = '2.0';
@@ -18,6 +19,7 @@ export class RasaDomainModel {
     this.responses = {};
     this.nlu = [];
     this.stories = [];
+    this.actions = ['action_ask_piaf'];
     this.session_config = {
       session_expiration_time: 60,
       carry_over_slots_to_new_session: true
