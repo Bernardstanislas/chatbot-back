@@ -1,0 +1,22 @@
+version: "3.7"
+
+services:
+  app:
+    build: .
+    command: npm run start:prod
+    volumes:
+      - ./chatbot-template:/app/chatbot-template
+    environment:
+      NODE_ENV: local
+      JWT_SECRET: s3cr3t
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
+      DATABASE_USER: user
+      DATABASE_PASSWORD: password
+      DATABASE_NAME: chatbot
+  db:
+    image: postgres:12
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: chatbot
