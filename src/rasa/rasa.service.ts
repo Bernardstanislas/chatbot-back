@@ -93,7 +93,8 @@ export class RasaService {
   private _intentsToRasa(intents: Intent[]) {
     const domain = new RasaDomainModel();
     const nlu = domain.nlu;
-    const stories = domain.stories;
+    // const stories = domain.stories;
+    domain.stories = null;
 
     // domain.intents = intents.map(i => i.id);
     intents.forEach(intent => {
@@ -112,12 +113,12 @@ export class RasaService {
       const responses = this._generateDomainUtter(intent);
 
       // Fill STORIES
-      stories.push(new RasaStoryModel(intent.id));
-      const steps = stories[stories.length - 1].steps;
-      steps.push({intent: intent.id});
-      Object.keys(responses).forEach(utter => {
-        steps.push({action: utter});
-      });
+      // stories.push(new RasaStoryModel(intent.id));
+      // const steps = stories[stories.length - 1].steps;
+      // steps.push({intent: intent.id});
+      // Object.keys(responses).forEach(utter => {
+      //   steps.push({action: utter});
+      // });
       domain.responses = Object.assign(responses, domain.responses);
     });
 
@@ -125,7 +126,7 @@ export class RasaService {
 
     // TODO DELETE WHEN RASA 2.0
     fs.writeFileSync(`${this._chatbotTemplateDir}/data/nlu.yml`, yaml.safeDump({version: "2.0", nlu: nlu}), 'utf8');
-    fs.writeFileSync(`${this._chatbotTemplateDir}/data/stories.yml`, yaml.safeDump({version: "2.0", stories: stories}), 'utf8');
+    // fs.writeFileSync(`${this._chatbotTemplateDir}/data/stories.yml`, yaml.safeDump({version: "2.0", stories: stories}), 'utf8');
   }
 
   /**
@@ -138,25 +139,22 @@ export class RasaService {
       const utterName = intent.id.startsWith('st_') ? `chitchat/${intent.id}` : `faq/${intent.id}`
       switch (response.response_type) {
         case ResponseType.text:
-          responses[`utter_${utterName}_${index}`] = [{text: response.response}];
+          responses[`utter_${utterName}`] = [{text: response.response}];
+          // responses[`utter_${utterName}_${index}`] = [{text: response.response}];
           break;
         case ResponseType.image:
-          responses[`utter_${utterName}_${index - 1}`][0].image = response.response;
+          responses[`utter_${utterName}`][0].image = response.response;
+          // responses[`utter_${utterName}_${index - 1}`][0].image = response.response;
           break;
         case ResponseType.button:
+        case ResponseType.quick_reply:
           const buttons: string[] = response.response.split(';');
-          responses[`utter_${utterName}_${index - 1}`][0].buttons = [];
-          let utter_buttons = responses[`utter_${utterName}_${index - 1}`][0].buttons;
+          responses[`utter_${utterName}`][0].buttons = [];
+          let utter_buttons = responses[`utter_${utterName}`][0].buttons;
+          // responses[`utter_${utterName}_${index - 1}`][0].buttons = [];
+          // let utter_buttons = responses[`utter_${utterName}_${index - 1}`][0].buttons;
           buttons.forEach(button => {
             utter_buttons.push(new RasaButtonModel(button));
-          });
-          break;
-        case ResponseType.quick_reply:
-          const quick_replies: string[] = response.response.split(';');
-          responses[`utter_${utterName}_${index - 1}`][0].buttons = [];
-          let utter_buttons_bis = responses[`utter_${utterName}_${index - 1}`][0].buttons;
-          quick_replies.forEach(quick_reply => {
-            utter_buttons_bis.push(new RasaButtonModel(quick_reply));
           });
           break;
       }
