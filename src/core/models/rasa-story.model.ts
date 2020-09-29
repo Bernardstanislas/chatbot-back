@@ -3,7 +3,7 @@ export class RasaStoryModel {
   steps: any[];
 
   constructor(intentId) {
-    this.story = intentId;
+    this.story = intentId.startsWith('st_') ? `chitchat/${intentId}` : `faq/${intentId}`
     this.steps = [];
   }
 }

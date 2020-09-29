@@ -95,7 +95,7 @@ export class RasaService {
     const nlu = domain.nlu;
     const stories = domain.stories;
 
-    domain.intents = intents.map(i => i.id);
+    // domain.intents = intents.map(i => i.id);
     intents.forEach(intent => {
       // Fill NLU
       nlu.push(new RasaNluModel(intent.id));
@@ -135,26 +135,26 @@ export class RasaService {
   private _generateDomainUtter(intent: Intent): { [key: string]: RasaUtterResponseModel[] } {
     const responses: { [key: string]: RasaUtterResponseModel[] } = {};
     intent.responses.forEach((response: Response, index: number) => {
+      const utterName = intent.id.startsWith('st_') ? `chitchat/${intent.id}` : `faq/${intent.id}`
       switch (response.response_type) {
         case ResponseType.text:
-          responses[`utter_${intent.id}_${index}`] = [{text: response.response}];
+          responses[`utter_${utterName}_${index}`] = [{text: response.response}];
           break;
         case ResponseType.image:
-          responses[`utter_${intent.id}_${index - 1}`][0].image = response.response;
+          responses[`utter_${utterName}_${index - 1}`][0].image = response.response;
           break;
         case ResponseType.button:
           const buttons: string[] = response.response.split(';');
-          responses[`utter_${intent.id}_${index - 1}`][0].buttons = [];
-          let utter_buttons = responses[`utter_${intent.id}_${index - 1}`][0].buttons;
+          responses[`utter_${utterName}_${index - 1}`][0].buttons = [];
+          let utter_buttons = responses[`utter_${utterName}_${index - 1}`][0].buttons;
           buttons.forEach(button => {
             utter_buttons.push(new RasaButtonModel(button));
           });
-          responses[`utter_${intent.id}_${index - 1}`][0].buttons = [new RasaButtonModel(response.response)];
           break;
         case ResponseType.quick_reply:
           const quick_replies: string[] = response.response.split(';');
-          responses[`utter_${intent.id}_${index - 1}`][0].buttons = [];
-          let utter_buttons_bis = responses[`utter_${intent.id}_${index - 1}`][0].buttons;
+          responses[`utter_${utterName}_${index - 1}`][0].buttons = [];
+          let utter_buttons_bis = responses[`utter_${utterName}_${index - 1}`][0].buttons;
           quick_replies.forEach(quick_reply => {
             utter_buttons_bis.push(new RasaButtonModel(quick_reply));
           });

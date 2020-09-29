@@ -3,7 +3,7 @@ export class RasaNluModel {
   examples: string;
 
   constructor(intentId) {
-    this.intent = intentId;
+    this.intent = intentId.startsWith('st_') ? `chitchat/${intentId}` : `faq/${intentId}`;
     this.examples = '';
   }
 }

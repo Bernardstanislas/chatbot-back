@@ -14,7 +14,7 @@ export class RasaDomainModel {
 
   constructor() {
     this.version = '2.0';
-    this.intents = [];
+    this.intents = ['chitchat', 'faq'];
     this.responses = {};
     this.nlu = [];
     this.stories = [];
